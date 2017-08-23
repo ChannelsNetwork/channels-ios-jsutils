@@ -1,6 +1,7 @@
 const secp256k1 = require('secp256k1');
 const ethereumUtils = require('ethereumjs-util');
 const KeyEncoder = require('key-encoder');
+const jwa = require('jwa');
 
 export class Utils {
   generateAddress(pkey: string): any {
@@ -19,5 +20,16 @@ export class Utils {
       address: (new Buffer(address).toString('base64')),
       ethAddress: '0x' + new Buffer(address).toString('hex')
     };
+  }
+
+  sign(value: string, privateKeyPem: string) {
+    const rs256 = jwa('RS256');
+    const signature = rs256.sign(value, privateKeyPem);
+    return signature;
+  }
+
+  verify(value: string, publicKeyPem: string, signature: string) {
+    const rs256 = jwa('RS256');
+    return rs256.verify(value, signature, publicKeyPem);
   }
 }
